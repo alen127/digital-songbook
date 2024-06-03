@@ -1,0 +1,47 @@
+@model ICollection<Model.Artist>
+
+@{
+    ViewData["Title"] = "My Artists";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+@* Using bootstrap principles, add buttons for editing, creating and deleting *@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>My Artists</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var artist in Model)
+                {
+                    <tr>
+                        <td>@artist.Name</td>
+                        <td><button class="btn btn-secondary">Edit</button></td>
+                        <td><button class="btn btn-danger">Delete</button></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            <button class="btn btn-primary">New artist</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
