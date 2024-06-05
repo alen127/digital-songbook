@@ -1,0 +1,18 @@
+@model ArtistCreateEditModel
+
+@{
+    ViewData["Title"] = "Editing " + Model.Name;
+}
+
+<html lang="en">
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+
+<form asp-action="Edit" method="post">
+    <partial name="_CreateEditPartial"></partial>
+</form>
+
+</body>
+</html>

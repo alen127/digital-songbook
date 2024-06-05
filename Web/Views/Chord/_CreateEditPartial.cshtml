@@ -1,0 +1,114 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Model
+@model ChordCreateEditModel
+@inject UserManager<ApplicationUser> UserManager;
+
+<div class="row">
+    <div class="col">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" name="name" id="name" asp-for="Name" placeholder="Enter the name of the chord">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <span>Chord in tab notation</span>
+    <div class="col">
+        <div class="form-group">
+            <label for="E2fret">E</label>
+            <select id="E2fret" name="E2fret" class="form-control" asp-items="@ViewBag.FretOptions" asp-for="E2Fret">
+            </select>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="Afret">A</label>
+            <select id="Afret" name="Afret" class="form-control" asp-items="@ViewBag.FretOptions" asp-for="AFret">
+
+            </select>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="Dfret">D</label>
+            <select id="Dfret" name="Dfret" class="form-control" asp-items="@ViewBag.FretOptions" asp-for="DFret">
+
+
+            </select>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="Gfret">G</label>
+            <select id="Gfret" name="Gfret" class="form-control" asp-items="@ViewBag.FretOptions" asp-for="GFret">
+
+            </select>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="Bfret">B</label>
+            <select id="Bfret" name="Bfret" class="form-control" asp-items="@ViewBag.FretOptions" asp-for="BFret">
+            </select>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="E4fret">e</label>
+            <select id="E4fret" name="E4fret" class="form-control" asp-items="@ViewBag.FretOptions" asp-for="E4Fret">
+            </select>
+        </div>
+    </div>
+</div>
+<span>Fingering</span>
+<div class="row">
+    <div class="col">
+        <div class="form-group">
+            <label for="E2finger">E</label>
+            <select id="E2finger" name="E2finger" class="finger-select form-control" asp-items="@ViewBag.FingerOptions" asp-for="E2Finger">
+            </select>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="Afinger">A</label>
+            <select id="Afinger" name="Afinger" class="finger-select form-control" asp-items="@ViewBag.FingerOptions" asp-for="AFinger">
+
+
+            </select>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="Dfinger">D</label>
+            <select id="Dfinger" name="Dfinger" class="finger-select form-control" asp-items="@ViewBag.FingerOptions" asp-for="DFinger">
+
+            </select>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="Gfinger">G</label>
+            <select id="Gfinger" name="Gfinger" class="finger-select form-control" asp-items="@ViewBag.FingerOptions" asp-for="GFinger">
+            </select>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="Bfinger">B</label>
+            <select id="Bfinger" name="Bfinger" class="finger-select form-control" asp-items="@ViewBag.FingerOptions" asp-for="BFinger">
+            </select>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="E4finger">e</label>
+            <select id="E4finger" name="E4finger" class="finger-select form-control" asp-items="@ViewBag.FingerOptions" asp-for="E4Finger">
+
+            </select>
+        </div>
+    </div>
+</div>
+<input type="hidden" name="userId" asp-for="UserId" value="@UserManager.GetUserId(User)">
+<button type="submit" class="btn btn-primary">Submit</button>

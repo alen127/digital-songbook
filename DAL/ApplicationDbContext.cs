@@ -19,12 +19,80 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         base.OnModelCreating(builder);
 
+        builder.Entity("Model.SongSection", b =>
+        {
+            b.HasOne("Model.ApplicationUser", "User")
+                .WithMany("SongSections")
+                .HasForeignKey("UserId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+        });
+
+        builder.Entity("Model.Song", b =>
+        {
+            b.HasOne("Model.ApplicationUser", "User")
+                .WithMany("Songs")
+                .HasForeignKey("UserId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+        });
+
+        builder.Entity("Model.ChordSongSection", b =>
+        {
+            b.HasOne("Model.ApplicationUser", "User")
+                .WithMany("ChordSongSections")
+                .HasForeignKey("UserId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+            b.HasOne("Model.SongSection", "Section")
+                .WithMany("ChordSongSections")
+                .HasForeignKey("SectionId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+        });
+
+        var userId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1";
         var artists = new List<Artist>
         {
-            new() { Id = 1, Name = "The Beatles", UserId = "41e11539-332c-49a3-90f3-b4c0455c9dee" },
-            new() { Id = 2, Name = "The Animals", UserId = "41e11539-332c-49a3-90f3-b4c0455c9dee" }
+            new()
+            {
+                Id = 1, Name = "The Beatles", UserId = userId,
+                ImageUrl =
+                    "https://upload.wikimedia.org/wikipedia/commons/d/d8/The_Beatles_members_at_New_York_City_in_1964.jpg"
+            },
+            new()
+            {
+                Id = 2, Name = "The Animals", UserId = userId,
+                ImageUrl =
+                    "https://upload.wikimedia.org/wikipedia/commons/0/02/Eric_Burdon_%26_the_Animals.jpg"
+            }
         };
+
         builder.Entity<Artist>()
             .HasData(artists);
+
+        var noFingering = new int[] { -1, -1, -1, -1, -1, -1 };
+        var chords = new List<Chord>
+        {
+            new() { Id = 1, Strings = [0, 2, 2, 1, 0, 0], Fingering = noFingering, Name = "E", UserId = userId },
+            new()
+            {
+                Id = 2, Strings = [-1, -1, 0, 2, 3, 2], Name = "D", Fingering = noFingering, UserId = userId
+            },
+            new()
+            {
+                Id = 3, Strings = [-1, 0, 2, 2, 2, 0], Fingering = [-1, -1, 1, 2, 3, -1], Name = "A",
+                UserId = userId
+            },
+            new()
+            {
+                Id = 4, Strings = [12, 14, 12, 13, 12, 12], Fingering = [1, 3, 1, 2, 1, 1], Name = "E7",
+                UserId = userId
+            },
+        };
+
+        builder.Entity<Chord>()
+            .HasData(chords);
+        
     }
 }

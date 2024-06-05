@@ -20,3 +20,8 @@ html {
 body {
     margin-bottom: 60px;
 }
+
+.artist-image {
+    height: 300px; /* Adjust as needed */
+    object-fit: cover;
+}

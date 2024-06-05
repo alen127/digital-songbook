@@ -1,0 +1,46 @@
+@using Microsoft.IdentityModel.Tokens
+@model ICollection<Model.Chord>
+
+@{
+    ViewData["Title"] = "My chords";
+    ViewData["Url"] = "https://chordgenerator.net/";
+    ViewData["ImageSize"] = 15;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>My chords</h1>
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var chord in Model)
+        {
+            <div class="col-md-2">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        @{
+                            var imageUrl = $"{ViewData["Url"]}{chord.Name}.png?p={chord.GetChordString()}&f={chord.GetFingeringString()}&s={ViewData["ImageSize"]}";
+                        }
+                        <img class="card-img-top chord-image" src="@imageUrl" alt="Card image cap">
+                        <a asp-action="Edit" asp-route-id="@chord.Id" class="btn btn-secondary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@chord.Id" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col">
+            <a asp-action="Create" class="btn btn-primary">Add chord</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

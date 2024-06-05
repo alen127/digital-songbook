@@ -1,0 +1,41 @@
+@model List<Model.Song>
+
+@{
+    ViewData["Title"] = "My songs";
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+@* Create a bootstrap table with song name and artist information (display the artist image and name), edit and delete buttons, also below the table add a add song button *@
+<table class="table">
+    <thead>
+    <tr>
+        <th>Song</th>
+        <th>Artist</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var song in Model)
+    {
+        <tr>
+            <td>@song.Name</td>
+            <td>
+                <img src="@song.Artist.ImageUrl" alt="@song.Artist.Name" width="40" height="40"/>
+                @song.Artist.Name
+            </td>
+            <td>
+                <button type="button" class="btn btn-primary">Edit</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+</body>
+</html>

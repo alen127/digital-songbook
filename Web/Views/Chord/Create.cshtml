@@ -1,0 +1,18 @@
+@model ChordCreateEditModel
+
+@{
+    ViewData["Title"] = "Add a chord";
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@ViewData["title"]</title>
+</head>
+<body>
+<form asp-action="Create" method="post">
+    <partial name="_CreateEditPartial"></partial>
+</form>
+</body>
+</html>

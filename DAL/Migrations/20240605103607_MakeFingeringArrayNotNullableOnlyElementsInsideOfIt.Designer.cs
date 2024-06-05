@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240603173900_SeedArtists")]
-    partial class SeedArtists
+    [Migration("20240605103607_MakeFingeringArrayNotNullableOnlyElementsInsideOfIt")]
+    partial class MakeFingeringArrayNotNullableOnlyElementsInsideOfIt
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -235,12 +235,16 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -253,14 +257,16 @@ namespace DAL.Migrations
                         new
                         {
                             Id = 1,
+                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/d/d8/The_Beatles_members_at_New_York_City_in_1964.jpg",
                             Name = "The Beatles",
-                            UserId = "41e11539-332c-49a3-90f3-b4c0455c9dee"
+                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
                         },
                         new
                         {
                             Id = 2,
+                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/0/02/Eric_Burdon_%26_the_Animals.jpg",
                             Name = "The Animals",
-                            UserId = "41e11539-332c-49a3-90f3-b4c0455c9dee"
+                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
                         });
                 });
 
@@ -272,10 +278,7 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Fingers")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Frets")
+                    b.Property<string>("Fingering")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -283,6 +286,10 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Strings")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -293,6 +300,40 @@ namespace DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Chords");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Fingering = "[null,null,null,null,null,null]",
+                            Name = "E",
+                            Strings = "[0,2,2,1,0,0]",
+                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Fingering = "[null,null,null,null,null,null]",
+                            Name = "D",
+                            Strings = "[-1,-1,0,2,3,2]",
+                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Fingering = "[-1,-1,1,2,3,-1]",
+                            Name = "A",
+                            Strings = "[-1,0,2,2,2,0]",
+                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Fingering = "[1,3,1,2,1,1]",
+                            Name = "E7",
+                            Strings = "[12,14,12,13,12,12]",
+                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
+                        });
                 });
 
             modelBuilder.Entity("Model.ChordSongSection", b =>
@@ -313,6 +354,7 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -457,7 +499,9 @@ namespace DAL.Migrations
                 {
                     b.HasOne("Model.ApplicationUser", "User")
                         .WithMany("Artists")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -484,12 +528,14 @@ namespace DAL.Migrations
                     b.HasOne("Model.SongSection", "Section")
                         .WithMany("ChordSongSections")
                         .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Model.ApplicationUser", "User")
                         .WithMany("ChordSongSections")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Chord");
 
@@ -509,7 +555,7 @@ namespace DAL.Migrations
                     b.HasOne("Model.ApplicationUser", "User")
                         .WithMany("Songs")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Artist");
@@ -528,7 +574,7 @@ namespace DAL.Migrations
                     b.HasOne("Model.ApplicationUser", "User")
                         .WithMany("SongSections")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Song");

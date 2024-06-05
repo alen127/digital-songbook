@@ -1,0 +1,16 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Model
+@model ArtistCreateEditModel
+@inject UserManager<ApplicationUser> UserManager;
+
+<div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" name="name" id="name" asp-for="Name" placeholder="Name">
+</div>
+<div class="form-group">
+    <label for="imageUrl">Link to image</label>
+    <input type="text" class="form-control" name="imageUrl" id="imageUrl" asp-for="ImageUrl" placeholder="Image URL">
+</div>
+<input type="hidden" name="userId" asp-for="UserId" value="@UserManager.GetUserId(User)">
+<button type="submit" class="btn btn-primary">Submit</button>

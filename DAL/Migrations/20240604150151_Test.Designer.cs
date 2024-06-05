@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240604150151_Test")]
+    partial class Test
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -276,7 +279,6 @@ namespace DAL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Fingering")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -302,7 +304,6 @@ namespace DAL.Migrations
                         new
                         {
                             Id = 1,
-                            Fingering = "[-1,-1,-1,-1,-1,-1]",
                             Name = "E",
                             Strings = "[0,2,2,1,0,0]",
                             UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
@@ -310,7 +311,6 @@ namespace DAL.Migrations
                         new
                         {
                             Id = 2,
-                            Fingering = "[-1,-1,-1,-1,-1,-1]",
                             Name = "D",
                             Strings = "[-1,-1,0,2,3,2]",
                             UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
