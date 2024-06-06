@@ -385,8 +385,8 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("StrummingPattern")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -399,6 +399,24 @@ namespace DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Songs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ArtistId = 1,
+                            Name = "Oh Darling!",
+                            StrummingPattern = "[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]",
+                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ArtistId = 2,
+                            Name = "House of the Rising Sun",
+                            StrummingPattern = "[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]",
+                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
+                        });
                 });
 
             modelBuilder.Entity("Model.SongSection", b =>
@@ -425,8 +443,8 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("StrummingPattern")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()

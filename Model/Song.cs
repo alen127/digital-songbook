@@ -12,18 +12,15 @@ public class Song
     [Range(0, int.MaxValue, ErrorMessage = "Bpm cannot be negative.")]
     public int? Bpm { get; set; }
 
-    [MaxLength(64)] public string? StrummingPattern { get; set; }
+    public bool[] StrummingPattern { get; set; } = new bool[16];
+
 
     [ForeignKey("Artist")] public int ArtistId { get; set; }
 
     public virtual Artist Artist { get; set; }
 
     public virtual List<SongSection> Sections { get; set; }
-    
+
     public string UserId { get; set; }
-    public virtual ApplicationUser User
-    {
-        get;
-        set;
-    }
+    public virtual ApplicationUser User { get; set; }
 }

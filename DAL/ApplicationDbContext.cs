@@ -93,6 +93,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         builder.Entity<Chord>()
             .HasData(chords);
-        
+
+
+        var songs = new List<Song>
+        {
+            new() { UserId = userId, ArtistId = 1, Name = "Oh Darling!", Id = 1 },
+            new() { UserId = userId, ArtistId = 2, Name = "House of the Rising Sun", Id = 2 }
+        };
+
+        builder.Entity<Song>().HasData(songs);
     }
 }

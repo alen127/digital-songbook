@@ -2,7 +2,6 @@ using DAL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Model;
 using Web.Models;
 
@@ -14,9 +13,10 @@ public class ArtistController(ApplicationDbContext _dbContext, UserManager<Appli
 {
     public IActionResult Index()
     {
-        var artists = _dbContext.Artists.Where(artist => artist.UserId == UserID);
-        var list = artists.ToList();
-        return View(list);
+        var artists = _dbContext.Artists.Where(artist => artist.UserId == UserID).ToList();
+        var model = artists.Select(artist => new ArtistViewModel()
+            { Id = artist.Id, Name = artist.Name, ImageUrl = artist.ImageUrl }).ToList();
+        return View(model);
     }
 
     public IActionResult Create()

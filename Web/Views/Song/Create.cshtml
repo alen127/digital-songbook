@@ -1,8 +1,9 @@
-@model ArtistCreateEditModel
+@model SongCreateEditModel
 
 @{
-    ViewData["Title"] = "Add a new artist";
+    ViewData["Title"] = "Add a song";
 }
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -10,10 +11,8 @@
     <title>@ViewData["Title"]</title>
 </head>
 <body>
-
 <form asp-action="Create" method="post">
     <partial name="_CreateEditPartial"></partial>
 </form>
-
 </body>
 </html>
