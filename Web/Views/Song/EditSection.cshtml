@@ -1,0 +1,22 @@
+@model SongSectionFormModel
+
+@{
+    ViewData["Title"] = "Editing section";
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+<form asp-action="EditSection" method="post">
+    <partial name="_CreateEditSectionPartial"/>
+    @foreach (var id in Model.ChordIds)
+    {
+        <select asp-items="@ViewBag.ChordOptions"></select>
+    }
+</form>
+</body>
+</html>

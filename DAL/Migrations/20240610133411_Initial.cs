@@ -184,8 +184,8 @@ namespace DAL.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Strings = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Fingering = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Frets = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Fingers = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -207,9 +207,10 @@ namespace DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Bpm = table.Column<int>(type: "int", nullable: true),
-                    StrummingPattern = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    StrummingPattern = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ArtistId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -220,6 +221,11 @@ namespace DAL.Migrations
                         principalTable: "Artists",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Songs_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Songs_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -235,19 +241,13 @@ namespace DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Lyrics = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
-                    StrummingPattern = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    StrummingPattern = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Position = table.Column<int>(type: "int", nullable: false),
-                    SongId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    SongId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sections", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Sections_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Sections_Songs_SongId",
                         column: x => x.SongId,
@@ -257,35 +257,29 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ChordSongSections",
+                name: "ChordSongSection",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ChordId = table.Column<int>(type: "int", nullable: false),
-                    SectionId = table.Column<int>(type: "int", nullable: false),
-                    Position = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    SongSectionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChordSongSections", x => x.Id);
+                    table.PrimaryKey("PK_ChordSongSection", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ChordSongSections_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ChordSongSections_Chords_ChordId",
+                        name: "FK_ChordSongSection_Chords_ChordId",
                         column: x => x.ChordId,
                         principalTable: "Chords",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ChordSongSections_Sections_SectionId",
-                        column: x => x.SectionId,
+                        name: "FK_ChordSongSection_Sections_SongSectionId",
+                        column: x => x.SongSectionId,
                         principalTable: "Sections",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
@@ -338,19 +332,14 @@ namespace DAL.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChordSongSections_ChordId",
-                table: "ChordSongSections",
+                name: "IX_ChordSongSection_ChordId",
+                table: "ChordSongSection",
                 column: "ChordId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChordSongSections_SectionId",
-                table: "ChordSongSections",
-                column: "SectionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ChordSongSections_UserId",
-                table: "ChordSongSections",
-                column: "UserId");
+                name: "IX_ChordSongSection_SongSectionId",
+                table: "ChordSongSection",
+                column: "SongSectionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sections_SongId",
@@ -358,9 +347,9 @@ namespace DAL.Migrations
                 column: "SongId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sections_UserId",
-                table: "Sections",
-                column: "UserId");
+                name: "IX_Songs_ApplicationUserId",
+                table: "Songs",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Songs_ArtistId",
@@ -392,7 +381,7 @@ namespace DAL.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "ChordSongSections");
+                name: "ChordSongSection");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

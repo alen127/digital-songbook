@@ -14,8 +14,10 @@ public class ChordController(ApplicationDbContext _dbContext, UserManager<Applic
 {
     public IActionResult Index()
     {
-        var chords = _dbContext.Chords.Where(c => c.UserId == UserID);
-        return View(chords.ToList());
+        var chords = _dbContext.Chords.Where(c => c.UserId == UserID).ToList();
+        var model = chords.Select(chord => new ChordViewModel()
+            { Id = chord.Id, Name = chord.Name, Frets = chord.Frets, Fingers = chord.Fingers }).ToList();
+        return View(model);
     }
 
     public IActionResult Create()
@@ -36,7 +38,7 @@ public class ChordController(ApplicationDbContext _dbContext, UserManager<Applic
         }
 
         var chord = new Chord()
-            { Name = model.Name, Strings = model.Frets, Fingering = model.Fingers, UserId = model.UserId };
+            { Name = model.Name, Frets = model.Frets, Fingers = model.Fingers, UserId = model.UserId };
 
 
         _dbContext.Chords.Add(chord);
@@ -51,10 +53,10 @@ public class ChordController(ApplicationDbContext _dbContext, UserManager<Applic
         var model = new ChordCreateEditModel()
         {
             Name = chord.Name, UserId = chord.UserId,
-            E2Fret = chord.Strings[0], AFret = chord.Strings[1], DFret = chord.Strings[2], GFret = chord.Strings[3],
-            BFret = chord.Strings[4], E4Fret = chord.Strings[5],
-            E2Finger = chord.Fingering[0], AFinger = chord.Fingering[1], DFinger = chord.Fingering[2],
-            GFinger = chord.Fingering[3], BFinger = chord.Fingering[4], E4Finger = chord.Fingering[5]
+            E2Fret = chord.Frets[0], AFret = chord.Frets[1], DFret = chord.Frets[2], GFret = chord.Frets[3],
+            BFret = chord.Frets[4], E4Fret = chord.Frets[5],
+            E2Finger = chord.Fingers[0], AFinger = chord.Fingers[1], DFinger = chord.Fingers[2],
+            GFinger = chord.Fingers[3], BFinger = chord.Fingers[4], E4Finger = chord.Fingers[5]
         };
         FillFingerDropdown();
         FillFretDropdown();
@@ -73,19 +75,19 @@ public class ChordController(ApplicationDbContext _dbContext, UserManager<Applic
         if (chord == null) return NotFound();
 
         chord.Name = model.Name;
-        chord.Strings[0] = model.E2Fret;
-        chord.Strings[1] = model.AFret;
-        chord.Strings[2] = model.DFret;
-        chord.Strings[3] = model.GFret;
-        chord.Strings[4] = model.BFret;
-        chord.Strings[5] = model.E4Fret;
+        chord.Frets[0] = model.E2Fret;
+        chord.Frets[1] = model.AFret;
+        chord.Frets[2] = model.DFret;
+        chord.Frets[3] = model.GFret;
+        chord.Frets[4] = model.BFret;
+        chord.Frets[5] = model.E4Fret;
 
-        chord.Fingering[0] = model.E2Finger;
-        chord.Fingering[1] = model.AFinger;
-        chord.Fingering[2] = model.DFinger;
-        chord.Fingering[3] = model.GFinger;
-        chord.Fingering[4] = model.BFinger;
-        chord.Fingering[5] = model.E4Finger;
+        chord.Fingers[0] = model.E2Finger;
+        chord.Fingers[1] = model.AFinger;
+        chord.Fingers[2] = model.DFinger;
+        chord.Fingers[3] = model.GFinger;
+        chord.Fingers[4] = model.BFinger;
+        chord.Fingers[5] = model.E4Finger;
 
         _dbContext.SaveChanges();
         return RedirectToAction("Index");

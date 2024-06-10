@@ -1,0 +1,157 @@
+@model SongSectionFormModel
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" id="name" class="form-control" asp-for="Name">
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="position" class="form-label">Position</label>
+                <input type="number" id="position" class="form-control" asp-for="Position"></input>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="lyrics" class="form-label">Lyrics</label>
+                <textarea  id="lyrics" cols="30" rows="10" class="form-control" asp-for="Lyrics"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <label class="form-label">Strumming pattern</label>
+            <div class="d-flex">
+                <div class="form-group me-3">
+                    <label for="subBeat-1">
+                        1<br>
+                        <input id="subBeat-1" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[0].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-2">
+                        e<br>
+                        <input id="subBeat-2" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[1].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-3">
+                        +<br>
+                        <input id="subBeat-3" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[2].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-4">
+                        a<br>
+                        <input id="subBeat-4" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[3].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-5">
+                        2<br>
+                        <input id="subBeat-5" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[4].IsChecked">
+                    </label>
+
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-6">
+                        e<br>
+                        <input id="subBeat-6" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[5].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-7">
+                        +<br>
+                        <input id="subBeat-7" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[6].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-8">
+                        a<br>
+                        <input id="subBeat-8" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[7].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-9">
+                        3<br>
+                        <input id="subBeat-9" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[8].IsChecked">
+                    </label>
+
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-10">
+                        e<br>
+                        <input id="subBeat-10" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[9].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-11">
+                        +<br>
+                        <input id="subBeat-11" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[10].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-12">
+                        a<br>
+                        <input id="subBeat-12" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[11].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-13">
+                        4<br>
+                        <input id="subBeat-13" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[12].IsChecked">
+                    </label>
+
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-14">
+                        e<br>
+                        <input id="subBeat-14" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[13].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-15">
+                        +<br>
+                        <input id="subBeat-15" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[14].IsChecked">
+                    </label>
+                </div>
+                <div class="form-group me-3">
+                    <label for="subBeat-16">
+                        a<br>
+                        <input id="subBeat-16" type="checkbox" class="form-check" asp-for="@Model.StrummingPattern[15].IsChecked">
+                    </label>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" asp-for="SongId">
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="chord" class="form-label">Chord progression</label>
+                <select id="chord" name="ChordIds[0]" asp-items="@ViewBag.ChordOptions" class="form-select"></select>
+            </div>
+        </div>
+    </div>
+
+    <div id="additionalChords"></div>
+    <div class="row">
+        <div class="col">
+            <button type="button" id="addChordButton" class="btn btn-secondary">Add another chord</button>
+            <button type="button" id="removeChordButton" class="btn btn-danger">Remove last chord</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</div>

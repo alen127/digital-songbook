@@ -1,3 +1,5 @@
+using Model;
+
 namespace Web.Models;
 
 public class SongViewModel
@@ -7,4 +9,5 @@ public class SongViewModel
     public ArtistViewModel Artist { get; set; }
     public int? Bpm { get; set; }
     public StrummingViewModel StrummingPattern { get; set; }
+    public List<SongSectionViewModel> Sections { get; set; }
 }

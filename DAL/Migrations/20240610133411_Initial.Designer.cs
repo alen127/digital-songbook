@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240604150151_Test")]
-    partial class Test
+    [Migration("20240610133411_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -252,22 +252,6 @@ namespace DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Artists");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/d/d8/The_Beatles_members_at_New_York_City_in_1964.jpg",
-                            Name = "The Beatles",
-                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/0/02/Eric_Burdon_%26_the_Animals.jpg",
-                            Name = "The Animals",
-                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
-                        });
                 });
 
             modelBuilder.Entity("Model.Chord", b =>
@@ -278,17 +262,18 @@ namespace DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Fingering")
+                    b.Property<string>("Fingers")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Frets")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Strings")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -299,38 +284,6 @@ namespace DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Chords");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "E",
-                            Strings = "[0,2,2,1,0,0]",
-                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "D",
-                            Strings = "[-1,-1,0,2,3,2]",
-                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Fingering = "[-1,-1,1,2,3,-1]",
-                            Name = "A",
-                            Strings = "[-1,0,2,2,2,0]",
-                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Fingering = "[1,3,1,2,1,1]",
-                            Name = "E7",
-                            Strings = "[12,14,12,13,12,12]",
-                            UserId = "cfa41478-4272-4ec9-a3bc-664ceb508dd1"
-                        });
                 });
 
             modelBuilder.Entity("Model.ChordSongSection", b =>
@@ -344,25 +297,16 @@ namespace DAL.Migrations
                     b.Property<int>("ChordId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Position")
+                    b.Property<int>("SongSectionId")
                         .HasColumnType("int");
-
-                    b.Property<int>("SectionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ChordId");
 
-                    b.HasIndex("SectionId");
+                    b.HasIndex("SongSectionId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ChordSongSections");
+                    b.ToTable("ChordSongSection");
                 });
 
             modelBuilder.Entity("Model.Song", b =>
@@ -372,6 +316,9 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ArtistId")
                         .HasColumnType("int");
@@ -385,14 +332,16 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("StrummingPattern")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("ArtistId");
 
@@ -425,18 +374,12 @@ namespace DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("StrummingPattern")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("SongId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Sections");
                 });
@@ -516,33 +459,25 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Model.ChordSongSection", b =>
                 {
-                    b.HasOne("Model.Chord", "Chord")
-                        .WithMany("ChordSongSections")
+                    b.HasOne("Model.Chord", null)
+                        .WithMany()
                         .HasForeignKey("ChordId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Model.SongSection", "Section")
-                        .WithMany("ChordSongSections")
-                        .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("Model.SongSection", null)
+                        .WithMany()
+                        .HasForeignKey("SongSectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Model.ApplicationUser", "User")
-                        .WithMany("ChordSongSections")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Chord");
-
-                    b.Navigation("Section");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Model.Song", b =>
                 {
+                    b.HasOne("Model.ApplicationUser", null)
+                        .WithMany("Songs")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Model.Artist", "Artist")
                         .WithMany("Songs")
                         .HasForeignKey("ArtistId")
@@ -550,7 +485,7 @@ namespace DAL.Migrations
                         .IsRequired();
 
                     b.HasOne("Model.ApplicationUser", "User")
-                        .WithMany("Songs")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -568,26 +503,14 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Model.ApplicationUser", "User")
-                        .WithMany("SongSections")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.Navigation("Song");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Model.ApplicationUser", b =>
                 {
                     b.Navigation("Artists");
 
-                    b.Navigation("ChordSongSections");
-
                     b.Navigation("Chords");
-
-                    b.Navigation("SongSections");
 
                     b.Navigation("Songs");
                 });
@@ -597,19 +520,9 @@ namespace DAL.Migrations
                     b.Navigation("Songs");
                 });
 
-            modelBuilder.Entity("Model.Chord", b =>
-                {
-                    b.Navigation("ChordSongSections");
-                });
-
             modelBuilder.Entity("Model.Song", b =>
                 {
                     b.Navigation("Sections");
-                });
-
-            modelBuilder.Entity("Model.SongSection", b =>
-                {
-                    b.Navigation("ChordSongSections");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,57 @@
+@model SongSectionFormModel
+
+@{
+    ViewData["Title"] = "Add a new section";
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+<form asp-action="CreateSection" method="post">
+    <partial name="_CreateEditSectionPartial"></partial>
+</form>
+</body>
+</html>
+
+@section Scripts
+{
+    <script>
+        document.getElementById('addChordButton').addEventListener('click', function() {
+            // Create new select element
+            const select = document.createElement('select');
+            select.className = 'form-select';
+            select.name = 'ChordIds[' + (document.querySelectorAll('#additionalChords select').length + 1) + ']'; // Unique name for each select
+
+            // Copy options from the original select element
+            const originalSelect = document.getElementById('chord');
+            for (let i = 0; i < originalSelect.options.length; i++) {
+                const option = document.createElement('option');
+                option.value = originalSelect.options[i].value;
+                option.text = originalSelect.options[i].text;
+                select.appendChild(option);
+            }
+
+            // Create new form group for the select
+            const formGroup = document.createElement('div');
+            formGroup.className = 'form-group mt-2';
+            formGroup.appendChild(select);
+
+            // Add the new form group to the form
+            document.getElementById('additionalChords').appendChild(formGroup);
+        });
+
+        document.getElementById('removeChordButton').addEventListener('click', function() {
+            // Get all select elements
+            const selects = document.querySelectorAll('#additionalChords select');
+
+            // If there is at least one select element, remove the last one
+            if (selects.length > 0) {
+                selects[selects.length - 1].parentNode.remove();
+            }
+        });
+    </script>
+}

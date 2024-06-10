@@ -11,8 +11,10 @@ public class SongSection
 
     [MaxLength(4096)] public string? Lyrics { get; set; }
 
-    [MaxLength(64)] public string? StrummingPattern { get; set; }
-    
+    public bool[] StrummingPattern { get; set; } = new bool[16];
+    public virtual List<Chord> Chords { get; set; }
+    public virtual List<ChordSongSection> ChordSongSections { get; set; }
+
     // Represents the position of a section in a song starting from 0
     // otherwise we wouldn't know the order of the sections
     [Required]
@@ -22,13 +24,4 @@ public class SongSection
     [ForeignKey("Song")] public int SongId { get; set; }
 
     public virtual Song Song { get; set; }
-
-    public virtual List<ChordSongSection> ChordSongSections { get; set; }
-    
-    public string UserId { get; set; }
-    public virtual ApplicationUser User
-    {
-        get;
-        set;
-    }
 }

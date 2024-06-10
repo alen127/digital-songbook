@@ -1,3 +1,4 @@
+@using Web.Utils
 @model SongViewModel
 
 @{
@@ -10,23 +11,58 @@
 <head>
     <title>@ViewData["Title"]</title>
 </head>
+
 <body>
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-8">
-            <h1>@Model.Name</h1>
-            <h2>@Model.Artist.Name</h2>
-            <img src="@Model.Artist.ImageUrl" alt="@Model.Artist.Name" class="" width="125px">
+            <h1 class="mb-3">@Model.Name</h1>
+            <h2 class="mb-3">@Model.Artist.Name</h2>
+            <img src="@Model.Artist.ImageUrl" alt="@Model.Artist.Name" class="img-fluid rounded" width="125px">
         </div>
         <div class="col-md-4">
-            <h3>Rhythm</h3>
+            <h3 class="mb-3">Rhythm</h3>
             @if (Model.StrummingPattern.Exists())
             {
-                <pre style="font-family: 'Courier', monospace"><h2>@Model.StrummingPattern.GetStrummingPatternArrows()</h2><h2>@Model.StrummingPattern.GetAllStrummingLetters()</h2></pre>
+                <pre class="bg-light p-2 rounded"><h2>@Model.StrummingPattern.GetStrummingPatternArrows()</h2><h2>@Model.StrummingPattern.GetAllStrummingLetters()</h2></pre>
             }
         </div>
     </div>
-    <a class="btn btn-primary" asp-action="CreateSection">Add section</a>
+    <div class="sections">
+        @foreach (var songSection in Model.Sections.OrderBy(section => section.Position))
+        {
+            <div class="row mt-5">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title">@songSection.Name</h3>
+                            <pre class="card-text">@songSection.Lyrics</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    @if (songSection.StrummingPattern.Exists())
+                    {
+                        <pre class="bg-light p-2 rounded"><h2>@songSection.StrummingPattern.GetStrummingPatternArrows()</h2><h2>@songSection.StrummingPattern.GetAllStrummingLetters()</h2></pre>
+                    }
+                    <div class="row mt-3">
+                        @foreach (var chordSongSection in songSection.ChordSongSections)
+                        {
+                            var chord = chordSongSection.Chord;
+                            <div class="col-md-2">
+                                <img class="card-img-top chord-image" src="@ChordUtils.getChordImageUrl(chord.Name, ChordUtils.getChordString(chord.Frets), ChordUtils.getFingeringString(chord.Fingers))" alt="Card image cap">
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div>
+                <a class="btn btn-secondary mt-5" asp-action="EditSection" asp-route-id="@songSection.Id">Edit section</a>
+                <a class="btn btn-danger mt-5" asp-action="DeleteSection" asp-route-id="@songSection.Id">Delete section</a>
+            </div>
+        }
+        <a class="btn btn-primary mt-5" asp-action="CreateSection" asp-route-songId="@Model.Id">Add section</a>
+    </div>
 </div>
 </body>
 </html>
