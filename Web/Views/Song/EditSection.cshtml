@@ -13,10 +13,92 @@
 <body>
 <form asp-action="EditSection" method="post">
     <partial name="_CreateEditSectionPartial"/>
-    @foreach (var id in Model.ChordIds)
-    {
-        <select asp-items="@ViewBag.ChordOptions"></select>
-    }
+    <div id="chords">
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" id="addChordButton" class="btn btn-secondary">Add another chord</button>
+            <button type="button" id="removeChordButton" class="btn btn-danger">Remove last chord</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
 </form>
 </body>
 </html>
+
+@section Scripts
+{
+    <script>
+        window.onload = function() {
+            // Get the ChordIds from the model
+            var chordIds = @Html.Raw(Json.Serialize(Model.ChordIds));
+
+            // Get the chords from the ViewBag
+            var chords = @Html.Raw(Json.Serialize(ViewBag.ChordOptions));
+
+            // Function to create a new select element
+            function createSelect(chordId) {
+                // Create new select element
+                const select = document.createElement('select');
+                select.className = 'form-select';
+                select.name = 'ChordIds[' + (document.querySelectorAll('#chords select').length) + ']'; // Unique name for each select
+
+                // Generate options from the chords array
+                for (let i = 0; i < chords.length; i++) {
+                    const option = document.createElement('option');
+                    option.value = chords[i].value;
+                    option.text = chords[i].text;
+                    select.appendChild(option);
+                }
+
+                // Set the value of the select element to the chordId
+                select.value = chordId;
+
+                // Create new form group for the select
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group mt-2';
+                formGroup.appendChild(select);
+
+                // Add the new form group to the form
+                document.getElementById('chords').appendChild(formGroup);
+            }
+
+            // Create a select element for each chordId in the model
+            for (let i = 0; i < chordIds.length; i++) {
+                createSelect(chordIds[i]);
+            }
+
+            // Add event listener to the add button
+            document.getElementById('addChordButton').addEventListener('click', function() {
+                createSelect(''); // Create a new select element with no selected value
+                document.getElementById('removeChordButton').disabled = false; // Enable the remove button
+            });
+
+            // Add event listener to the remove button
+            document.getElementById('removeChordButton').addEventListener('click', function() {
+                // Get all select elements
+                const selects = document.querySelectorAll('#chords select');
+
+                // If there is at least one select element, remove the last one
+                if (selects.length > 0) {
+                    selects[selects.length - 1].parentNode.remove();
+                }
+
+                // If there is only one select element left, disable the remove button
+                if (document.querySelectorAll('#chords select').length === 1) {
+                    document.getElementById('removeChordButton').disabled = true;
+                }
+            });
+
+            // If there is only one select element when the page loads, disable the remove button
+            if (document.querySelectorAll('#chords select').length === 1) {
+                document.getElementById('removeChordButton').disabled = true;
+            }
+        }
+    </script>
+}

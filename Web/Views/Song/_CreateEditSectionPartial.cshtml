@@ -132,26 +132,5 @@
         <input type="hidden" asp-for="SongId">
     </div>
 
-    <div class="row">
-        <div class="col">
-            <div class="form-group">
-                <label for="chord" class="form-label">Chord progression</label>
-                <select id="chord" name="ChordIds[0]" asp-items="@ViewBag.ChordOptions" class="form-select"></select>
-            </div>
-        </div>
-    </div>
 
-    <div id="additionalChords"></div>
-    <div class="row">
-        <div class="col">
-            <button type="button" id="addChordButton" class="btn btn-secondary">Add another chord</button>
-            <button type="button" id="removeChordButton" class="btn btn-danger">Remove last chord</button>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-    </div>
 </div>

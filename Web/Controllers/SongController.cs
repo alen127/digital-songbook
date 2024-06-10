@@ -153,10 +153,10 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
             Name = model.Name,
             SongId = model.SongId,
             Lyrics = model.Lyrics,
-            StrummingPattern = model.StrummingPatternArray, 
+            StrummingPattern = model.StrummingPatternArray,
             Position = model.Position,
         };
-        
+
         _dbContext.Sections.Add(songSection);
         _dbContext.SaveChanges();
         foreach (var chordId in model.ChordIds)
@@ -182,6 +182,9 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
             .SingleOrDefault(section => section.Id == id);
         if (section == null) return NotFound();
 
+        var chordIds = _dbContext.ChordSongSections.Where(songSection => songSection.SongSectionId == id)
+            .Select(songSection => songSection.ChordId).ToList();
+
         var model = new SongSectionFormModel()
         {
             Name = section.Name,
@@ -189,11 +192,34 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
             Lyrics = section.Lyrics,
             Position = section.Position,
             StrummingPattern = SongSectionFormModel.ConvertBoolArrayToStrummingPattern(section.StrummingPattern),
-            ChordIds = section.Chords.Select(chord => chord.Id).ToList()
+            ChordIds = chordIds
         };
 
         FillChordDropdown();
         return View(model);
+    }
+
+    [HttpPost]
+    public IActionResult EditSection(int id, SongSectionFormModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            FillChordDropdown();
+            return View(model);
+        }
+
+        var section = _dbContext.Sections.Include(s => s.ChordSongSections).SingleOrDefault(s => s.Id == id);
+        if (section == null) return NotFound();
+
+        section.Name = model.Name;
+        section.Position = model.Position;
+        section.Lyrics = model.Lyrics;
+        section.StrummingPattern = model.StrummingPattern.Select(StrumModel => StrumModel.IsChecked).ToArray();
+        section.ChordSongSections = model.ChordIds
+            .Select(chordId => new ChordSongSection() { ChordId = chordId, SongSectionId = id }).ToList();
+
+        _dbContext.SaveChanges();
+        return RedirectToAction("Song", new { id = section.SongId });
     }
 
     public IActionResult DeleteSection(int id)
@@ -202,14 +228,13 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
             .Include(songSection => songSection.ChordSongSections).FirstOrDefault(s => s.Id == id);
         if (songSection == null) return NotFound();
 
-        var songId = songSection.SongId;
 
         // Remove the ChordSongSection entities that reference the SongSection
         _dbContext.ChordSongSections.RemoveRange(songSection.ChordSongSections);
 
         _dbContext.Sections.Remove(songSection);
         _dbContext.SaveChanges();
-        return RedirectToAction("Song", new { id=songId });
+        return RedirectToAction("Song", new { id = songSection.SongId });
     }
 
 
