@@ -68,6 +68,8 @@ public class ChordController(ApplicationDbContext _dbContext, UserManager<Applic
     {
         if (!ModelState.IsValid)
         {
+            FillFingerDropdown();
+            FillFretDropdown();
             return View(model);
         }
 

@@ -90,15 +90,21 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
 
     public IActionResult Delete(int id)
     {
-        var song = _dbContext.Songs.Find(id);
+        var song = _dbContext.Songs.Include(s => s.Sections).ThenInclude(songSection => songSection.ChordSongSections)
+            .SingleOrDefault(s => s.Id == id);
         if (song == null) return NotFound();
+
+        foreach (var songSection in song.Sections)
+        {
+            _dbContext.ChordSongSections.RemoveRange(songSection.ChordSongSections);
+        }
 
         _dbContext.Songs.Remove(song);
         _dbContext.SaveChanges();
         return RedirectToAction("Index");
     }
 
-    public IActionResult Song(int id)
+    public IActionResult Details(int id)
     {
         var song = _dbContext.Songs.Include(song => song.Artist).Include(song => song.Sections)
             .ThenInclude(songSection => songSection.Chords).Include(song => song.Sections)
@@ -173,7 +179,7 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
         _dbContext.SaveChanges();
 
         // Redirect to song page using model.SongId
-        return RedirectToAction("Song", new { id = model.SongId });
+        return RedirectToAction("Details", new { id = model.SongId });
     }
 
     public IActionResult EditSection(int id)
@@ -219,7 +225,7 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
             .Select(chordId => new ChordSongSection() { ChordId = chordId, SongSectionId = id }).ToList();
 
         _dbContext.SaveChanges();
-        return RedirectToAction("Song", new { id = section.SongId });
+        return RedirectToAction("Details", new { id = section.SongId });
     }
 
     public IActionResult DeleteSection(int id)
@@ -234,7 +240,7 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
 
         _dbContext.Sections.Remove(songSection);
         _dbContext.SaveChanges();
-        return RedirectToAction("Song", new { id = songSection.SongId });
+        return RedirectToAction("Details", new { id = songSection.SongId });
     }
 
 

@@ -2,6 +2,7 @@ using DAL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Model;
 using Web.Models;
 
@@ -48,10 +49,19 @@ public class ArtistController(ApplicationDbContext _dbContext, UserManager<Appli
     [HttpGet]
     public IActionResult Delete(int id)
     {
-        var artist = _dbContext.Artists.Find(id);
+        var artist = _dbContext.Artists.Include(a => a.Songs).ThenInclude(s => s.Sections)
+            .ThenInclude(songSection => songSection.ChordSongSections).SingleOrDefault(a => a.Id == id);
         if (artist == null)
         {
             return NotFound();
+        }
+
+        foreach (var song in artist.Songs)
+        {
+            foreach (var songSection in song.Sections)
+            {
+                _dbContext.ChordSongSections.RemoveRange(songSection.ChordSongSections);
+            }
         }
 
         _dbContext.Artists.Remove(artist);

@@ -22,6 +22,10 @@
         </div>
         <div class="col-md-4">
             <h3 class="mb-3">Rhythm</h3>
+            @if (Model.Bpm != null)
+            {
+                <p>BPM: @Model.Bpm</p>
+            }
             @if (Model.StrummingPattern.Exists())
             {
                 <pre class="bg-light p-2 rounded"><h2>@Model.StrummingPattern.GetStrummingPatternArrows()</h2><h2>@Model.StrummingPattern.GetAllStrummingLetters()</h2></pre>
