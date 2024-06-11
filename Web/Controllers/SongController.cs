@@ -17,13 +17,13 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
     public IActionResult Index()
     {
         var songs = _dbContext.Songs.Include(song => song.Artist).Where(song => song.UserId == UserID).ToList();
-        var model = songs.Select(song => new SongViewModel()
+        var model = songs.Select(song => new SongViewModel
         {
             Id = song.Id,
-            Artist = new ArtistViewModel()
+            Artist = new ArtistViewModel
                 { Name = song.Artist.Name, Id = song.ArtistId, ImageUrl = song.Artist.ImageUrl },
             Bpm = song.Bpm, Name = song.Name,
-            StrummingPattern = new StrummingViewModel() { StrummingPattern = song.StrummingPattern }
+            StrummingPattern = new StrummingViewModel { StrummingPattern = song.StrummingPattern }
         }).ToList();
         return View(model);
     }
@@ -43,7 +43,7 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
             return View(model);
         }
 
-        var song = new Song()
+        var song = new Song
         {
             Name = model.Name, ArtistId = model.ArtistId, StrummingPattern = model.StrummingPatternArray,
             UserId = model.UserId, Bpm = model.Bpm
@@ -59,7 +59,7 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
     {
         var song = _dbContext.Songs.Find(id);
         if (song == null) return NotFound();
-        var model = new SongCreateEditModel()
+        var model = new SongCreateEditModel
         {
             Name = song.Name, ArtistId = song.ArtistId, Bpm = song.Bpm, UserId = song.UserId,
             StrummingPattern = SongCreateEditModel.ConvertBoolArrayToStrummingPattern(song.StrummingPattern)
@@ -95,9 +95,7 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
         if (song == null) return NotFound();
 
         foreach (var songSection in song.Sections)
-        {
             _dbContext.ChordSongSections.RemoveRange(songSection.ChordSongSections);
-        }
 
         _dbContext.Songs.Remove(song);
         _dbContext.SaveChanges();
@@ -111,18 +109,18 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
             .ThenInclude(songSection => songSection.ChordSongSections)
             .SingleOrDefault(song => song.Id == id);
         if (song == null) return NotFound();
-        var model = new SongViewModel()
+        var model = new SongViewModel
         {
             Id = song.Id,
             Name = song.Name,
             Bpm = song.Bpm,
-            Artist = new ArtistViewModel()
+            Artist = new ArtistViewModel
             {
                 Name = song.Artist.Name,
                 Id = song.ArtistId,
                 ImageUrl = song.Artist.ImageUrl
             },
-            StrummingPattern = new StrummingViewModel() { StrummingPattern = song.StrummingPattern },
+            StrummingPattern = new StrummingViewModel { StrummingPattern = song.StrummingPattern },
             Sections = song.Sections.Select(section => new SongSectionViewModel
             {
                 Id = section.Id,
@@ -154,20 +152,20 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
             return View(model);
         }
 
-        var songSection = new SongSection()
+        var songSection = new SongSection
         {
             Name = model.Name,
             SongId = model.SongId,
             Lyrics = model.Lyrics,
             StrummingPattern = model.StrummingPatternArray,
-            Position = model.Position,
+            Position = model.Position
         };
 
         _dbContext.Sections.Add(songSection);
         _dbContext.SaveChanges();
         foreach (var chordId in model.ChordIds)
         {
-            var chordSongSection = new ChordSongSection()
+            var chordSongSection = new ChordSongSection
             {
                 SongSectionId = songSection.Id,
                 ChordId = chordId
@@ -191,7 +189,7 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
         var chordIds = _dbContext.ChordSongSections.Where(songSection => songSection.SongSectionId == id)
             .Select(songSection => songSection.ChordId).ToList();
 
-        var model = new SongSectionFormModel()
+        var model = new SongSectionFormModel
         {
             Name = section.Name,
             SongId = section.SongId,
@@ -222,7 +220,7 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
         section.Lyrics = model.Lyrics;
         section.StrummingPattern = model.StrummingPattern.Select(StrumModel => StrumModel.IsChecked).ToArray();
         section.ChordSongSections = model.ChordIds
-            .Select(chordId => new ChordSongSection() { ChordId = chordId, SongSectionId = id }).ToList();
+            .Select(chordId => new ChordSongSection { ChordId = chordId, SongSectionId = id }).ToList();
 
         _dbContext.SaveChanges();
         return RedirectToAction("Details", new { id = section.SongId });
@@ -248,7 +246,7 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
     {
         var chords = _dbContext.Chords.Where(chord => chord.UserId == UserID).ToList();
         var selectItems =
-            chords.Select(chord => new SelectListItem() { Text = chord.Name, Value = chord.Id.ToString() });
+            chords.Select(chord => new SelectListItem { Text = chord.Name, Value = chord.Id.ToString() });
         ViewBag.ChordOptions = selectItems;
     }
 
@@ -256,7 +254,7 @@ public class SongController(ApplicationDbContext _dbContext, UserManager<Applica
     {
         var artists = _dbContext.Artists.Where(artist => artist.UserId == UserID).ToList();
         var selectItems = artists
-            .Select(artist => new SelectListItem() { Text = artist.Name, Value = artist.Id.ToString() }).ToList();
+            .Select(artist => new SelectListItem { Text = artist.Name, Value = artist.Id.ToString() }).ToList();
 
         ViewBag.ArtistOptions = selectItems;
     }

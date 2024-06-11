@@ -15,7 +15,7 @@ public class ChordController(ApplicationDbContext _dbContext, UserManager<Applic
     public IActionResult Index()
     {
         var chords = _dbContext.Chords.Where(c => c.UserId == UserID).ToList();
-        var model = chords.Select(chord => new ChordViewModel()
+        var model = chords.Select(chord => new ChordViewModel
             { Id = chord.Id, Name = chord.Name, Frets = chord.Frets, Fingers = chord.Fingers }).ToList();
         return View(model);
     }
@@ -37,7 +37,7 @@ public class ChordController(ApplicationDbContext _dbContext, UserManager<Applic
             return View(model);
         }
 
-        var chord = new Chord()
+        var chord = new Chord
             { Name = model.Name, Frets = model.Frets, Fingers = model.Fingers, UserId = model.UserId };
 
 
@@ -50,7 +50,7 @@ public class ChordController(ApplicationDbContext _dbContext, UserManager<Applic
     {
         var chord = _dbContext.Chords.Find(id);
         if (chord == null) return NotFound();
-        var model = new ChordCreateEditModel()
+        var model = new ChordCreateEditModel
         {
             Name = chord.Name, UserId = chord.UserId,
             E2Fret = chord.Frets[0], AFret = chord.Frets[1], DFret = chord.Frets[2], GFret = chord.Frets[3],
@@ -107,21 +107,18 @@ public class ChordController(ApplicationDbContext _dbContext, UserManager<Applic
 
     private void FillFretDropdown()
     {
-        var selectItems = new List<SelectListItem>()
+        var selectItems = new List<SelectListItem>
         {
             new() { Value = "-1", Text = "x - Muted", Selected = true }
         };
-        for (var i = 0; i <= 24; i++)
-        {
-            selectItems.Add(new SelectListItem { Value = i.ToString(), Text = i.ToString() });
-        }
+        for (var i = 0; i <= 24; i++) selectItems.Add(new SelectListItem { Value = i.ToString(), Text = i.ToString() });
 
         ViewBag.FretOptions = selectItems;
     }
 
     private void FillFingerDropdown()
     {
-        var selectItems = new List<SelectListItem>()
+        var selectItems = new List<SelectListItem>
         {
             new() { Value = "-1", Text = "No finger", Selected = true },
             new() { Value = "0", Text = "T - Thumb" },

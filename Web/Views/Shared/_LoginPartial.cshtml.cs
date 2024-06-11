@@ -6,6 +6,5 @@ public class _LoginPartial : PageModel
 {
     public void OnGet()
     {
-        
     }
 }

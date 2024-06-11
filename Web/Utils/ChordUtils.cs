@@ -9,23 +9,17 @@ public class ChordUtils
         var imageUrl = $"{URI}{name}.png?p={chordString}&f={FingeringString}&s={IMAGE_SIZE}";
         return imageUrl;
     }
-    
+
     public static string getChordString(int[] frets)
     {
         var result = "";
         var isAboveOrEqualTenthFret = false;
         foreach (var i in frets)
         {
-            if (i >= 10)
-            {
-                isAboveOrEqualTenthFret = true;
-            }
+            if (i >= 10) isAboveOrEqualTenthFret = true;
 
             var s = i + "-";
-            if (i == -1)
-            {
-                s = "x-";
-            }
+            if (i == -1) s = "x-";
 
             result += s;
         }
@@ -34,7 +28,7 @@ public class ChordUtils
 
         return result;
     }
-    
+
     public static string getFingeringString(int[] fingers)
     {
         var result = "";
@@ -42,13 +36,8 @@ public class ChordUtils
         {
             var s = i.ToString();
             if (i == 0)
-            {
                 s = "T";
-            }
-            else if (i == -1)
-            {
-                s = "-";
-            }
+            else if (i == -1) s = "-";
 
             result += s;
         }

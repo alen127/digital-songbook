@@ -11,10 +11,9 @@ public class StrummingViewModel
 
     private static bool Is16Strumming(bool[] strummingPattern)
     {
-        for (int i = 1; i < 16; i += 2)
-        {
-            if (strummingPattern[i]) return true;
-        }
+        for (var i = 1; i < 16; i += 2)
+            if (strummingPattern[i])
+                return true;
 
         return false;
     }
@@ -29,7 +28,6 @@ public class StrummingViewModel
         const string padding = " ";
         var strummingPatternSymbols = "";
         for (var i = 0; i < 16; i++)
-        {
             if (Is16Strumming(StrummingPattern))
             {
                 if (!StrummingPattern[i]) strummingPatternSymbols += padding;
@@ -42,7 +40,6 @@ public class StrummingViewModel
                 else if (i % 4 == 0 && StrummingPattern[i]) strummingPatternSymbols += downStrum;
                 else if (i % 4 != 0 && StrummingPattern[i]) strummingPatternSymbols += upStrum;
             }
-        }
 
         return strummingPatternSymbols;
     }

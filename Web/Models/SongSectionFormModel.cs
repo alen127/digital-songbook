@@ -15,15 +15,11 @@ public class SongSectionFormModel
     public static StrummingPatternCreateEditModel[] ConvertBoolArrayToStrummingPattern(bool[] values)
     {
         if (values.Length != 16)
-        {
             throw new ArgumentException("Input array length must match StrummingPattern length", nameof(values));
-        }
 
         var strummingPattern = new StrummingPatternCreateEditModel[16];
         for (var i = 0; i < values.Length; i++)
-        {
             strummingPattern[i] = new StrummingPatternCreateEditModel { IsChecked = values[i] };
-        }
 
         return strummingPattern;
     }

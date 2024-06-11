@@ -1,6 +1,4 @@
-﻿using System.Xml.Schema;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Model;
 
@@ -54,13 +52,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 new { Id = 8, SongSectionId = 2, ChordId = 3 },
                 new { Id = 9, SongSectionId = 2, ChordId = 3 },
                 new { Id = 10, SongSectionId = 3, ChordId = 2 },
-                new { Id = 11, SongSectionId = 3, ChordId = 1 },
+                new { Id = 11, SongSectionId = 3, ChordId = 1 }
             ]));
     }
 
     private void SeedSections(ModelBuilder builder)
     {
-        var LetItBeSections = new List<SongSection>()
+        var LetItBeSections = new List<SongSection>
         {
             new()
             {
@@ -84,7 +82,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 [
                     true, false, false, false, true, false, true, false, true, true, false, false, true, false, true,
                     false
-                ],
+                ]
             },
             new()
             {
@@ -92,7 +90,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 Lyrics =
                     "And when the broken hearted people living in the world agree\nThere will be an answer, let it be\nFor though they may be parted, there is still a chance that they will see\nThere will be an answer, let it be",
                 SongId = 1
-            },
+            }
         };
 
         builder.Entity<SongSection>().HasData(LetItBeSections);
@@ -120,7 +118,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     private void SeedChords(ModelBuilder builder, string userId)
     {
-        var noFingering = new int[] { -1, -1, -1, -1, -1, -1 };
+        var noFingering = new[] { -1, -1, -1, -1, -1, -1 };
         var chords = new List<Chord>
         {
             new() { Id = 1, Frets = [0, 2, 2, 1, 0, 0], Fingers = noFingering, Name = "E", UserId = userId },
@@ -137,7 +135,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             {
                 Id = 4, Frets = [12, 14, 12, 13, 12, 12], Fingers = [1, 3, 1, 2, 1, 1], Name = "E7",
                 UserId = userId
-            },
+            }
         };
 
         builder.Entity<Chord>()
