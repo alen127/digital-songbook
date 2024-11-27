@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240610142633_FixDeleteSectionDeletingChords")]
-    partial class FixDeleteSectionDeletingChords
+    [Migration("20241121164012_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -225,6 +225,24 @@ namespace DAL.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "39ffa927-8fd6-46a4-88ad-b8347c07adaa",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "6fcfac05-f41a-40f4-832c-e2a495e212b0",
+                            Email = "admin@example.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                            NormalizedUserName = "ADMIN@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPG1Iw+7LhsC7gtm/cwqm1Zi3QOUxeyPLqDh5hbTe5Va3048KEqpNU5MGuF32u4Eow==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "fc2bc521-e278-4113-81c8-2560634a87b7",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@example.com"
+                        });
                 });
 
             modelBuilder.Entity("Model.Artist", b =>
@@ -626,18 +644,20 @@ namespace DAL.Migrations
             modelBuilder.Entity("Model.ChordSongSection", b =>
                 {
                     b.HasOne("Model.Chord", "Chord")
-                        .WithMany()
+                        .WithMany("ChordSongSections")
                         .HasForeignKey("ChordId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Model.SongSection", null)
+                    b.HasOne("Model.SongSection", "SongSection")
                         .WithMany("ChordSongSections")
                         .HasForeignKey("SongSectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Chord");
+
+                    b.Navigation("SongSection");
                 });
 
             modelBuilder.Entity("Model.Song", b =>
@@ -686,6 +706,11 @@ namespace DAL.Migrations
             modelBuilder.Entity("Model.Artist", b =>
                 {
                     b.Navigation("Songs");
+                });
+
+            modelBuilder.Entity("Model.Chord", b =>
+                {
+                    b.Navigation("ChordSongSections");
                 });
 
             modelBuilder.Entity("Model.Song", b =>
