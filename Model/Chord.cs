@@ -17,8 +17,8 @@ public class Chord
     // 0 - thumb, 1 - index, 2 - middle, 3 - ring, 4 - pinky, -1 - no finger
     public int[] Fingers { get; set; }
 
-    public virtual List<SongSection> Sections { get; }
-
+    public virtual List<SongSection> Sections { get; set;}
+    public virtual List<ChordSongSection> ChordSongSections { get; set; }
 
     public string UserId { get; set; }
     public virtual ApplicationUser User { get; set; }
