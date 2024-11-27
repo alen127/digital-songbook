@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Model;
 
@@ -12,49 +13,80 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<SongSection> Sections { get; set; }
     public DbSet<Song> Songs { get; set; }
     public DbSet<ChordSongSection> ChordSongSections { get; set; }
+    private readonly PasswordHasher<ApplicationUser> _passwordHasher = new();
 
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
 
-        builder.Entity<Chord>()
-            .HasMany(e => e.Sections)
-            .WithMany(e => e.Chords)
-            .UsingEntity<ChordSongSection>();
+   protected override void OnModelCreating(ModelBuilder builder)
+{
+    base.OnModelCreating(builder);
 
-        builder.Entity<Song>()
-            .HasOne(s => s.User)
-            .WithMany()
-            .OnDelete(DeleteBehavior.NoAction);
+    // First configure all entity relationships
+    builder.Entity<Chord>()
+        .HasMany(c => c.Sections)
+        .WithMany(s => s.Chords)
+        .UsingEntity<ChordSongSection>(
+            j => j
+                .HasOne(css => css.SongSection)
+                .WithMany(s => s.ChordSongSections)
+                .HasForeignKey(css => css.SongSectionId)
+                .OnDelete(DeleteBehavior.NoAction),
+            j => j
+                .HasOne(css => css.Chord)
+                .WithMany(c => c.ChordSongSections)
+                .HasForeignKey(css => css.ChordId)
+                .OnDelete(DeleteBehavior.NoAction),
+            j => 
+            {
+                j.HasKey(t => t.Id);
+                j.ToTable("ChordSongSection");
+            });
 
-        var userId = "39ffa927-8fd6-46a4-88ad-b8347c07adaa";
+    builder.Entity<Song>()
+        .HasOne(s => s.User)
+        .WithMany()
+        .OnDelete(DeleteBehavior.NoAction);
 
-        SeedArtists(builder, userId);
-        SeedChords(builder, userId);
-        SeedSongs(builder, userId);
-        SeedSections(builder);
-        SeedSectionsChords(builder);
-    }
+    // Then seed data in dependency order
+    var userId = "39ffa927-8fd6-46a4-88ad-b8347c07adaa";
+    
+    // Seed the user first
+var user = new ApplicationUser
+{
+    Id = userId,
+    UserName = "admin@example.com",
+    NormalizedUserName = "ADMIN@EXAMPLE.COM",
+    Email = "admin@example.com",
+    NormalizedEmail = "ADMIN@EXAMPLE.COM",
+    EmailConfirmed = true,
+    SecurityStamp = Guid.NewGuid().ToString(),
+    ConcurrencyStamp = Guid.NewGuid().ToString()
+};
 
-    private void SeedSectionsChords(ModelBuilder builder)
-    {
-        builder.Entity<SongSection>()
-            .HasMany(s => s.Chords)
-            .WithMany(c => c.Sections)
-            .UsingEntity(j => j.ToTable("ChordSongSection").HasData([
-                new { Id = 1, SongSectionId = 1, ChordId = 1 },
-                new { Id = 2, SongSectionId = 1, ChordId = 3 },
-                new { Id = 3, SongSectionId = 1, ChordId = 4 },
-                new { Id = 4, SongSectionId = 1, ChordId = 2 },
-                new { Id = 5, SongSectionId = 1, ChordId = 1 },
-                new { Id = 6, SongSectionId = 1, ChordId = 3 },
-                new { Id = 7, SongSectionId = 2, ChordId = 1 },
-                new { Id = 8, SongSectionId = 2, ChordId = 3 },
-                new { Id = 9, SongSectionId = 2, ChordId = 3 },
-                new { Id = 10, SongSectionId = 3, ChordId = 2 },
-                new { Id = 11, SongSectionId = 3, ChordId = 1 }
-            ]));
-    }
+// Add password "Admin123!"
+user.PasswordHash = _passwordHasher.HashPassword(user, "Admin123!");
+
+builder.Entity<ApplicationUser>().HasData(user);
+
+    SeedArtists(builder, userId);
+    SeedChords(builder, userId);
+    SeedSongs(builder, userId);
+    SeedSections(builder);
+
+    // Finally seed the join table
+    builder.Entity<ChordSongSection>().HasData(
+        new ChordSongSection { Id = 1, SongSectionId = 1, ChordId = 1 },
+        new ChordSongSection { Id = 2, SongSectionId = 1, ChordId = 3 },
+        new ChordSongSection { Id = 3, SongSectionId = 1, ChordId = 4 },
+        new ChordSongSection { Id = 4, SongSectionId = 1, ChordId = 2 },
+        new ChordSongSection { Id = 5, SongSectionId = 1, ChordId = 1 },
+        new ChordSongSection { Id = 6, SongSectionId = 1, ChordId = 3 },
+        new ChordSongSection { Id = 7, SongSectionId = 2, ChordId = 1 },
+        new ChordSongSection { Id = 8, SongSectionId = 2, ChordId = 3 },
+        new ChordSongSection { Id = 9, SongSectionId = 2, ChordId = 3 },
+        new ChordSongSection { Id = 10, SongSectionId = 3, ChordId = 2 },
+        new ChordSongSection { Id = 11, SongSectionId = 3, ChordId = 1 }
+    );
+}
 
     private void SeedSections(ModelBuilder builder)
     {
