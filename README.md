@@ -35,21 +35,26 @@ docker exec db ./opt/mssql-tools18/bin/sqlcmd -U sa -P Password123 -C -Q "CREATE
 
 ### Running the Application
 
-Run the following commands from the **root directory of the project**:
+1. **Clone the repository and cd into the root of the project**:
 
-1. **Restore dependencies**:
+```bash
+git clone git@github.com:alen127/digital-songbook.git && cd digital-songbook
+```
+
+
+2. **Restore dependencies**:
 
 ```bash
 dotnet restore
 ```
 
-2. **Populate the database**: 
+3. **Populate the database**: 
 
 ```bash
 dotnet-ef database update --startup-project Web --project DAL
 ```
 
-3. **Start the application**: 
+4. **Start the application**: 
 
 ```bash
 dotnet run --project Web
