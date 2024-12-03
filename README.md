@@ -2,6 +2,8 @@
 
 Digital Songbook is a very creatively named web application designed to help musicians organize and track the chords and songs they've learned.
 
+It was made using ASP.NET MVC (with some bootstrap and jquery) and SQL Server for one of my university classes.
+
 # Preview
 ![Artists page](screenshots/artists.png)
 ![Chords page](screenshots/chords.png)
